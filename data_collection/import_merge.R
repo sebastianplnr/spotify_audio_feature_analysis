@@ -14,9 +14,6 @@ combined_data = data.frame(do.call(rbind, my_data)) # create one data set
 combined_data = rownames_to_column(combined_data, "Country") # convert row names to column
 
 
-# back to old working dir
-setwd(old_dir)
-
 
 # get data in order
 ## extract country name from file name
@@ -30,4 +27,8 @@ combined_data$Song.ID = song_id # overwrite old column values with clean song id
 
 # get unique song ids and save as csv
 unique_songids = unique(combined_data$Song.ID)
-write.csv(unique_songids, "unique_songids.csv")
+write.csv(unique_songids, "_unique_songids.csv")
+
+
+# back to old working dir
+setwd(old_dir)
