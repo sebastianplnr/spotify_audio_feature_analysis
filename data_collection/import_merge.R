@@ -32,3 +32,11 @@ write.csv(unique_songids, "_unique_songids.csv")
 
 # back to old working dir
 setwd(old_dir)
+
+
+# split into chunks for more efficient querying
+chunks = split(unique_songids, ceiling(seq_along(unique_songids)/100))
+chunks = lapply(chunks, glue::glue_collapse, ",", last = ",")
+chunks = unlist(chunks, use.names = FALSE)
+write.csv(chunks, "_unique_songids_chunks.csv")
+
