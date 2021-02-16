@@ -25,6 +25,10 @@ song_id = gsub("https://open.spotify.com/track/", "", combined_data$Song.ID) # d
 combined_data$Song.ID = song_id # overwrite old column values with clean song ids
 
 
+# save merged and cleaned country data set
+write.csv(combined_data, "merged_charts_data.csv")
+
+
 # get unique song ids and save as csv
 unique_songids = unique(combined_data$Song.ID)
 write.csv(unique_songids, "unique_songids.csv")
