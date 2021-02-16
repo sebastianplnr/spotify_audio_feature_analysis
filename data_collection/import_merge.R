@@ -2,7 +2,7 @@ library("tidyverse")
 
 # temporarily set new working dir to import data
 old_dir = getwd()
-file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis/data"
+file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis/data/country_data"
 setwd(file_path)
 
 
@@ -27,7 +27,7 @@ combined_data$Song.ID = song_id # overwrite old column values with clean song id
 
 # get unique song ids and save as csv
 unique_songids = unique(combined_data$Song.ID)
-write.csv(unique_songids, "_unique_songids.csv")
+write.csv(unique_songids, "unique_songids.csv")
 
 
 # back to old working dir
@@ -38,5 +38,5 @@ setwd(old_dir)
 chunks = split(unique_songids, ceiling(seq_along(unique_songids)/100))
 chunks = lapply(chunks, glue::glue_collapse, ",", last = ",")
 chunks = unlist(chunks, use.names = FALSE)
-write.csv(chunks, "_unique_songids_chunks.csv")
+write.csv(chunks, "unique_songids_chunks.csv")
 
