@@ -8,7 +8,7 @@ This project seeks to visualise the difference between the predicted 2020 mood (
 
 The following will describe each step of the project such that interested parties can fully understand and replicate the project. The repository contains all the necessary tools for this. The scripts and data sets are numbered corresponding to the following steps and their outputs. Both R and Python were used as each of them possesses unique strengths and limitations. 
 
-A final thought, this project by no means aims at making causal inferences between the observed differences and their causes it is merely descriptive. Given the amount of factors in play it will hardly ever be possible to make causal inferences. That being said extending the project by correlating the observed differences with number of covid cases or (excess) deaths might a very interesting.
+A final thought, this project by no means aims at making inferences about the causes for the observed differences, it is merely descriptive. Given the amount of factors in play it will hardly ever be possible to make causal inferences. That being said extending the project by correlating the observed differences with e.g., number of covid cases or (excess) deaths would be very interesting.
 
 
 ### Step 1 (in Python)
