@@ -22,8 +22,12 @@ my_data$Week = as.factor(my_data$Week)
 
 
 # reducing data to essential variables such that it is smaller and therefore easier to handle
-reduced_weighted_data = my_data %>%
-  select(Country, Date, Week, valence, danceability, energy, tempo, Rank, Song.ID) %>%
+# reduced_weighted_data = 
+  my_data %>%
+  select(Country, Date, Week, Rank, Streams, valence, danceability, energy, tempo, Song.ID) %>%
+  group_by(Country, Week, as.factor(Rank)) %>%
+  mutate(stream_proportion = Streams / sum(Streams))
+  ungroup() %>% 
   mutate(reversed_rank = 201 - Rank,
          weighted_valence = valence * reversed_rank,
          weighted_danceability= danceability * reversed_rank,
