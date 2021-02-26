@@ -4,21 +4,21 @@ In December, during a virtual discussion, Spotify and its potential of assessing
 
 In Covid times, case numbers dominate our everyday lives as they inform the lastest points of action of the government. It is often criticised that governments are relying too much on these numbers and seldom consider the people's psychological states. Part of this problem is that the case numbers are much more tangible than emotion or mood, particularly at scale. So what if there was a way to evaluate mood at scale without the cost and time-consuming surveying and interviewing? This is where music is entering the stage. Assuming the type of music is indeed partly determined by our state of mind, would it not be worthwhile trying to analyse the songs we listen to?
 
-This project seeks to visualise the difference between the predicted 2020 mood (based on the past three non-covid years) and the actual 2020 mood. Spotify, being one of the biggest players in music streaming, publishes since January 2017 the top 200 songs per week for 70 countries. They have also developed an algorithm that assigns each song a "valence", "danceability", "energy", and "tempo" score based on the song's characteristics. These scores can be queried by registered Spotify developers.
+This project seeks to visualise the difference between the predicted 2020 mood (based on the past three non-Covid years) and the actual 2020 mood. Spotify, being one of the biggest players in music streaming, publishes since January 2017 the top 200 songs per week for 70 countries. They have also developed an algorithm that assigns each song a "valence", "danceability", "energy", and "tempo" score based on the song's characteristics. These scores can be queried by registered Spotify developers.
 
 The following will describe each step of the project such that interested parties can fully understand and replicate the project. The repository contains all the necessary tools for this. The scripts and data sets are numbered corresponding to the following steps and their outputs. Both R and Python were used as each of them possesses unique strengths and limitations. 
 
-A final thought, this project by no means aims at making inferences about the causes for the observed differences, it is merely descriptive. Given the amount of factors in play it will hardly ever be possible to make causal inferences. That being said extending the project by correlating the observed differences with e.g., number of covid cases or (excess) deaths, or degree of restrictions or movement activity would be very interesting.
+A final thought, this project by no means aims at making inferences about the causes for the observed differences, it is merely descriptive. Given the amount of factors in play it will hardly ever be possible to make causal inferences. That being said extending the project by correlating the observed differences with e.g., number of Covid cases or (excess) deaths, or degree of restrictions or movement activity would be very interesting.
 
 
 ### Step 1 (in Python)
-Scrape Spotify charts (here: all possible countries, top 200, weekly) and save data per country as CSV.
+Scrape Spotify charts (here: all possible countries, top 200, weekly) and save data per country as csv.
 
 ### Step 2 (in R)
-Import all countries data sets, merge them, identify unique song IDs (to minimise server requests) and save them as a CSV.
+Import all countries data sets, merge them, identify unique song IDs (to minimise server requests) and save them as a csv.
 
 ### Steps 3 (in Python)
-Query songs' audio features through Spotify API using song IDs and save them as a CSV.
+Query songs' audio features through Spotify API using song IDs and save them as a csv.
 
 ### Step 4 (in R)
 Join the charts with the audio features.
