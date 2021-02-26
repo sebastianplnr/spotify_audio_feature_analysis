@@ -1,5 +1,7 @@
 library("tidyverse")
 library("plotly")
+library("countrycode")
+library("rworldmap")
 
 # set new working directory
 file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis/"
@@ -11,6 +13,9 @@ library("here") # set working directory PRIOR to loading "here".
 reduced_data = read.csv(here("data", "5_reduced_weighted_data.csv"))
 reduced_data = reduced_data %>% filter(Date >= as.Date("2020-01-01"))
 reduced_data$Country = str_to_title(reduced_data$Country) # capitalise countries' first letters
+reduced_data = reduced_data %>%
+  mutate(country_iso2 = countrycode(Country, "country.name", "iso3c", warn = F)) # warn to false because "global" did not match
+
 
 
 weighted_audio_features_pred = read.csv(here("data", "6_weighted_audio_features_pred.csv"))
@@ -21,7 +26,7 @@ combined_data = cbind(reduced_data, weighted_audio_features_pred)
 # valence graph
 valence_heatmap = 
   combined_data %>%
-    mutate(delta = weighted_valence - weighted_valence_pred) %>%
+    mutate(delta = weighted_valence_pred - weighted_valence) %>%
     group_by(Country, Week) %>%
     summarise(difference = round(mean(delta), digits = 2)) %>% 
     ggplot(aes(Week, Country, fill = difference)) + geom_tile() +
@@ -46,7 +51,7 @@ ggsave("figures/valence_heatmap.png", valence_heatmap, width = 15, height = 13)
 # danceability graph
 danceability_heatmap = 
   combined_data %>%
-    mutate(delta = weighted_danceability - weighted_danceability_pred) %>%
+    mutate(delta = weighted_danceability_pred - weighted_danceability) %>%
     group_by(Country, Week) %>%
     summarise(difference = round(mean(delta), digits = 2)) %>% 
     ggplot(aes(Week, Country, fill = difference)) + geom_tile() +
@@ -71,7 +76,7 @@ ggsave("figures/danceability_heatmap.png", danceability_heatmap, width = 15, hei
 # energy graph
 energy_heatmap = 
   combined_data %>%
-    mutate(delta = weighted_energy - weighted_energy_pred) %>%
+    mutate(delta = weighted_energy_pred - weighted_energy) %>%
     group_by(Country, Week) %>%
     summarise(difference = round(mean(delta), digits = 2)) %>% 
     ggplot(aes(Week, Country, fill = difference)) + geom_tile() +
@@ -96,7 +101,7 @@ ggsave("figures/energy_heatmap.png", energy_heatmap, width = 15, height = 13)
 # tempo graph
 tempo_heatmap = 
   combined_data %>%
-    mutate(delta = weighted_tempo - weighted_tempo_pred) %>%
+    mutate(delta = weighted_tempo_pred - weighted_tempo) %>%
     group_by(Country, Week) %>%
     summarise(difference = round(mean(delta), digits = 2)) %>% 
     ggplot(aes(Week, Country, fill = difference)) + geom_tile() +
