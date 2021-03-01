@@ -11,17 +11,30 @@ library("here") # set working directory PRIOR to loading "here".
 
 
 reduced_data = read.csv(here("data", "5_reduced_weighted_data.csv"))
-reduced_data = reduced_data %>% filter(Date >= as.Date("2020-01-01"))
+reduced_data = reduced_data %>% filter(Date >= as.Date("2020-01-01")) # Date <= "2020-12-31"
 reduced_data$Country = str_to_title(reduced_data$Country) # capitalise countries' first letters
 reduced_data = reduced_data %>%
-  mutate(country_iso2 = countrycode(Country, "country.name", "iso3c", warn = F)) # warn to false because "global" did not match
+  mutate(country_iso2 = as.factor(countrycode(Country, "country.name", "iso3c", warn = F)),
+         continent = as.factor(countrycode(country_iso2, "iso3c", "continent"))) # warn to false because "global" did not match
 
 
 
 weighted_audio_features_pred = read.csv(here("data", "6_weighted_audio_features_pred.csv"))
 weighted_audio_features_pred = weighted_audio_features_pred %>% select(-X) # exclude the index prior to merging
 combined_data = cbind(reduced_data, weighted_audio_features_pred)
+# combined_data = combined_data %>% filter(Date <= as.Date("2020-12-31")) 
 
+
+combined_data$Date = as.Date(combined_data$Date)
+combined_data$Country = as.factor(combined_data$Country)
+
+test1 = reduced_data %>%
+  filter(Country == "Germany") %>%
+  group_by(Date) %>% 
+  summarise(avg_valence = mean(valence)) %>% 
+  ggplot(aes(Date, avg_valence)) + geom_line()
+
+ggplotly(test1)
 
 # valence graph
 valence_heatmap = 
@@ -43,6 +56,8 @@ valence_heatmap
 
 valence_heatmap_html = ggplotly(valence_heatmap)
 valence_heatmap_html
+
+
 
 ggsave("figures/valence_heatmap.png", valence_heatmap, width = 15, height = 13)
 # save interactive heat map manually through the export button in the plot previewer
