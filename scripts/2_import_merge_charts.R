@@ -30,16 +30,16 @@ combined_data$Song.ID = song_id # overwrite old column values with clean song id
 
 
 # save merged and cleaned data set
-write.csv(combined_data, here("data", "1_charts.csv"))
+write.csv(combined_data, here("data", "1_charts.csv"), row.names = FALSE)
 
 
 # get unique song ids and save as csv
 unique_songids = unique(combined_data$Song.ID)
-write.csv(unique_songids, here("data", "2_songids.csv"))
+write.csv(unique_songids, here("data", "2_songids.csv"), row.names = FALSE)
 
 
 # split into chunks for more efficient querying
 chunks = split(unique_songids, ceiling(seq_along(unique_songids)/100)) # 100 is the max number of song ids Spotify allows per request
 chunks = lapply(chunks, glue::glue_collapse, ",", last = ",")
 chunks = unlist(chunks, use.names = FALSE)
-write.csv(chunks, here("data", "2_songids_chunks.csv"))
+write.csv(chunks, here("data", "2_songids_chunks.csv"), row.names = FALSE)

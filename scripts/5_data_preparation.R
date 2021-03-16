@@ -1,38 +1,67 @@
 library("tidyverse")
 library("lubridate")
+library("countrycode")
+
 
 # set new working directory
 file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis/"
 setwd(file_path)
 
-library("here") # set working directory PRIOR to loading "here".
 
-my_data = read.csv(here("data", "4_charts_audio_features.csv"))
+# set working directory PRIOR to loading "here".
+library("here")
 
-my_data = my_data %>%
-  select(-c("X", "X1", "type", "uri"))
 
-my_data = my_data %>% filter(!is.na(valence))
+# import data
+data = read.csv(here("data", "4_charts_audio_features.csv"))
 
-my_data$Week = isoweek(ymd(my_data$Date))
 
-my_data$Date = as.Date(my_data$Date)
-my_data$Country = as.factor(my_data$Country)
-my_data$Week = as.factor(my_data$Week)
+# select relevant columns, change to all lower case names
+data = data %>%
+  select(-c("X", "X1", "Index", "type":"time_signature")) %>% 
+  rename("country" = "Country", "song" = "Song", "artist" = "Artist", "date" = "Date", "song_id" = "Song.ID", "streams" = "Streams", "rank" = "Rank")
+
+
+# clean the country names 
+data$country = countrycode(data$country, "country.name", "country.name", warn = FALSE, nomatch = NULL)
+data$country = ifelse(data$country == "global", "Global", data$country)
+
+
+# check na's. nine cases does seem to have randomly missing audio data which is, hence, excluded
+data = data %>% filter(!is.na(valence))
+
+
+# 674 songs have not songs and artist name, however, all other data points are seemingly perfectly fine and, hence, data is kept
+filter(data, is.na(data))
+
+
+# create week variable
+data$week = isoweek(ymd(data$date))
+
+
+# order columns
+column_order = c("song", "artist", "country", "date", "week", "streams", "rank", "danceability", "energy", "key", "loudness", "mode", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo", "song_id")
+data = data[, column_order]
+
+
+# having to exclude some country due to a lack of data (spotify started collecting charts later some countries than others)
+data = data %>% filter(country != "Andorra", country != "Russia", country != "Ukraine", country != "India",
+                       country != "Egypt", country != "Morocco", country != "United Arab Emirates",
+                       country != "Saudi Arabia")
+
+
+# export cleaned data
+write.csv(data, here("data", "5_clean_data.csv"), row.names = FALSE)
 
 
 # reducing data to essential variables such that it is smaller and therefore easier to handle
-# reduced_weighted_data = 
-  my_data %>%
-  select(Country, Date, Week, Rank, Streams, valence, danceability, energy, tempo, Song.ID) %>%
-  mutate(reversed_rank = 201 - Rank,
+reduced_weighted_data = data %>%
+  select(country, date, week, rank, streams, valence, danceability, energy, tempo, song_id) %>%
+  mutate(reversed_rank = 201 - rank,
          weighted_valence = valence * reversed_rank,
-         weighted_danceability= danceability * reversed_rank,
+         weighted_danceability = danceability * reversed_rank,
          weighted_energy = energy * reversed_rank,
-         weighted_tempo = tempo * reversed_rank
-         ) %>%
-  filter(Country != "russian_federation", Country != "ukraine", Country != "andorra",
-         Week != "53") # not consistent in the data across all 4 years
+         weighted_tempo = tempo * reversed_rank)
 
-write.csv(reduced_weighted_data, here("data", "5_reduced_weighted_data.csv"))
+write.csv(reduced_weighted_data, here("data", "5_reduced_weighted_data.csv"), row.names = FALSE)
 

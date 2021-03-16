@@ -1,7 +1,6 @@
 library("tidyverse")
 library("plotly")
 library("countrycode")
-library("rworldmap")
 
 # set new working directory
 file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis/"
@@ -9,7 +8,7 @@ setwd(file_path)
 
 library("here") # set working directory PRIOR to loading "here".
 
-
+# importing data, filter for > 2020 data, and get ISO ountry codes
 reduced_data = read.csv(here("data", "5_reduced_weighted_data.csv"))
 reduced_data = reduced_data %>% filter(Date >= as.Date("2020-01-01")) # Date <= "2020-12-31"
 reduced_data$Country = str_to_title(reduced_data$Country) # capitalise countries' first letters
@@ -18,27 +17,30 @@ reduced_data = reduced_data %>%
          continent = as.factor(countrycode(country_iso2, "iso3c", "continent"))) # warn to false because "global" did not match
 
 
-
+# import predicted scores
 weighted_audio_features_pred = read.csv(here("data", "6_weighted_audio_features_pred.csv"))
 weighted_audio_features_pred = weighted_audio_features_pred %>% select(-X) # exclude the index prior to merging
+
+# combined reduced and predicted data, filter for 2020 only 
 combined_data = cbind(reduced_data, weighted_audio_features_pred)
-# combined_data = combined_data %>% filter(Date <= as.Date("2020-12-31")) 
-
-
+combined_data = combined_data %>% filter(Date <= as.Date("2020-12-31")) 
 combined_data$Date = as.Date(combined_data$Date)
 combined_data$Country = as.factor(combined_data$Country)
+
 
 test1 = reduced_data %>%
   filter(Country == "Germany") %>%
   group_by(Date) %>% 
   summarise(avg_valence = mean(valence)) %>% 
-  ggplot(aes(Date, avg_valence)) + geom_line()
+  ggplot(aes(Date, avg_valence)) + geom_point()
 
 ggplotly(test1)
+
 
 # valence graph
 valence_heatmap = 
   combined_data %>%
+    filter(continent == "Europe") %>% 
     mutate(delta = weighted_valence_pred - weighted_valence) %>%
     group_by(Country, Week) %>%
     summarise(difference = round(mean(delta), digits = 2)) %>% 

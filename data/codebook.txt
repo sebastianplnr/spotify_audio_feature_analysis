@@ -1,3 +1,17 @@
+"country" - Country in which the song was listed
+
+"song" - Track name
+
+"artist" - Artist of the song 
+
+"date" - Date on which the charts were published (usually on Thursdays)
+
+"song_id" - Unique track identifier
+
+"streams" - Number of times the track was streamed
+
+"rank" - Ranking of track within the charts
+
 "danceability" - Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity. A value of 0.0 is least danceable and 1.0 is most danceable.
 
 "energy" - Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.

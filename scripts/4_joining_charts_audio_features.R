@@ -16,7 +16,7 @@ audio_features = data.frame(audio_features)
 
 # rename column such that data sets can be joined by an identifier variable
 audio_features = audio_features %>% 
-  rename("Index" = "X1", "Song.ID" = "id")
+  rename("Song.ID" = "id")
 
 
 # join chart data with audio feature data and select relevant variables
@@ -32,7 +32,7 @@ summary(selected_data)
 na_data = charts_audio_features %>% filter(is.na(valence))
 na_songids = na_data %>% select(Song.ID)
 
-write.csv(na_songids, here("data", "4_na_songids"))
+write.csv(na_songids, here("data", "4_na_songids"), row.names = FALSE)
 
 
 # after retrieving missing audio features import, clean, select and filter them
@@ -58,4 +58,4 @@ final_data = final_data %>% filter(!is.na(valence))
 
 
 # export full data set
-write.csv(final_data, here("data", "4_charts_audio_features.csv"))
+write.csv(final_data, here("data", "4_charts_audio_features.csv"), row.names = FALSE)
