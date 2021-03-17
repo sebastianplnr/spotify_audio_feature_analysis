@@ -28,13 +28,36 @@ combined_data$Date = as.Date(combined_data$Date)
 combined_data$Country = as.factor(combined_data$Country)
 
 
-test1 = reduced_data %>%
-  filter(Country == "Germany") %>%
-  group_by(Date) %>% 
-  summarise(avg_valence = mean(valence)) %>% 
-  ggplot(aes(Date, avg_valence)) + geom_point()
 
-ggplotly(test1)
+# line plot
+valence_line_plot = data %>%
+  filter(country == "United States" | country == "United Kingdom" | country == "Germany") %>% 
+  mutate(difference = valence_pred - avg_weighted_valence,
+         deviation_in_percent = round((difference/valence_pred), digits = 2)) %>%
+  ggplot(aes(year_week2, deviation_in_percent, colour = country)) +
+  geom_line() +
+  theme_classic() +
+  theme(panel.grid.major = element_line(size = 0.1, colour = "gray"),
+        plot.title = element_text(size = 18, face = "bold")) +
+  scale_x_date(name = "",
+               date_breaks = "2 month",
+               date_labels = "%b %Y") +
+  scale_y_continuous(name = "Deviation from expected valence",
+                     labels = scales::percent_format(accuracy = 1L),
+                     limits = c(-0.25, 0.25)) +
+  scale_colour_discrete(name = "Country") +
+  labs(title = "Valence during Covid-19 times",
+       subtitle = "Based on Spotify's weekly top 200 songs")
+
+
+ggsave("figures/valence_line_plot.png", valence_line_plot, width = 10, height = 6)
+
+
+
+# trying to calculate smoothing scores for the heatmap
+x = loess(valence_pred ~ as.numeric(year_week2), degree = 0, span = 0.1, data = data2)$fitted
+ggplot(data2, aes(year_week2, x)) + geom_line()
+
 
 
 # valence graph
