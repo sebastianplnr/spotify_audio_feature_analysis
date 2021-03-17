@@ -8,3 +8,5 @@
 /data/1_charts_per_country/*.csv
 
 /scripts/*.Rproj
+
+/attic
