@@ -1,5 +1,6 @@
 library("tidyverse")
 library("lubridate")
+library("aweek")
 library("countrycode")
 
 
@@ -35,12 +36,14 @@ data = data %>% filter(!is.na(valence))
 filter(data, is.na(data))
 
 
-# create week variable
-data$week = isoweek(ymd(data$date))
+# create year and week variable (with leading zeros for the single digit weeks)
+data$year = isoyear(ymd(data$date))
+data$week = date2week(data$date)
+data$week = ubstr(data$week, 7, 8)
 
 
 # order columns
-column_order = c("song", "artist", "country", "date", "week", "streams", "rank", "danceability", "energy", "key", "loudness", "mode", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo", "song_id")
+column_order = c("song", "artist", "country", "date", "year", "week", "streams", "rank", "danceability", "energy", "key", "loudness", "mode", "speechiness", "acousticness", "instrumentalness", "liveness", "valence", "tempo", "song_id")
 data = data[, column_order]
 
 

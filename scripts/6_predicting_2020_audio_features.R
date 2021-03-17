@@ -46,8 +46,3 @@ valence_predicted = predict(trained_model, newdata = test_data)
 write.csv(valence_predicted, here("data", "valence_predicted_rf.csv"))
 
 # valence_predicted = read.csv(here("data", "valence_predicted_rf.csv"))
-
-
-# my_data_2 = my_data_test %>% filter(Date >= as.Date("2020-01-01"))
-# my_data_2$valence_100 = my_data_2$valence*100
-# my_data_2$valence_predicted = as.vector(valence_predicted$x)
