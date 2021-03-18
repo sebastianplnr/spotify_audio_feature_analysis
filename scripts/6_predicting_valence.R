@@ -18,17 +18,10 @@ data$country = as.factor(data$country)
 
 # reducing data to essential variables such that it is smaller and therefore easier to handle
 reduced_weighted_data = data %>%
-  select(country, date, year, week, rank, valence, danceability, energy, tempo) %>%
-  mutate(reversed_rank = 201 - rank,
-         weighted_valence = valence * reversed_rank,
-         weighted_danceability = danceability * reversed_rank,
-         weighted_energy = energy * reversed_rank,
-         weighted_tempo = tempo * reversed_rank) %>% 
+  select(country, date, year, week, rank, valence) %>%
+  mutate(reversed_rank = 201 - rank, weighted_valence = valence * reversed_rank) %>% 
   group_by(country, year, week) %>% 
-  summarise(avg_weighted_valence = mean(weighted_valence),
-            avg_weighted_danceability = mean(weighted_danceability),
-            avg_weighted_energy = mean(weighted_energy),
-            avg_weighted_tempo = mean(weighted_tempo))
+  summarise(avg_weighted_valence = mean(weighted_valence))
 
 
 # train model to predict 2020 valence scores which will serve as baseline to compare the actual 2020 data against
@@ -40,11 +33,25 @@ test_data = reduced_weighted_data %>% filter(year >= 2020, week != 53)
 
 # basic linear modelling
 lm1 = lm(lm1_formula, data = training_data)
-valence_pred = predict(lm1, newdata = test_data)
+weighted_valence_pred = predict(lm1, newdata = test_data)
 
 
 # merged actual and predicted data sets 
-data2 = cbind(test_data, data.frame(valence_pred))
+combined_data = cbind(test_data, data.frame(weighted_valence_pred))
 
-data2$year_week2 = make_date(year = data2$year) + weeks(data2$week)
 
+# (re-)calculate date variable such that a continuous x-axis can be plotted
+combined_data$date = make_date(year = combined_data$year) + weeks(combined_data$week)
+
+
+# calculate difference between baseline (i.e. predicted valence) and actual valence
+combined_data = combined_data %>%
+  mutate(difference = round((weighted_valence_pred - avg_weighted_valence), digits = 2),
+         proportion_of_deviation = round((difference/weighted_valence_pred), digits = 2)) %>%
+  select(country, date, avg_weighted_valence, weighted_valence_pred, difference, proportion_of_deviation)
+  
+
+combined_data = data.frame(combined_data)
+
+
+write.csv(combined_data, here("data", "6_predicted_valence.csv"), row.names = FALSE)
