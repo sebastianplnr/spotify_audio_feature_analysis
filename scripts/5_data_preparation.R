@@ -38,8 +38,9 @@ filter(data, is.na(data))
 
 # create year and week variable (with leading zeros for the single digit weeks)
 data$year = isoyear(ymd(data$date))
+
 data$week = date2week(data$date)
-data$week = ubstr(data$week, 7, 8)
+data$week = substr(data$week, 7, 8) # extract week number
 
 
 # order columns
