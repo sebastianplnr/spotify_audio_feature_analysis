@@ -1,5 +1,5 @@
 library("tidyverse")
-library("stringr")
+library("data.table")
 
 # set new working directory
 file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis"
@@ -9,7 +9,7 @@ library("here") # set working directory PRIOR to loading "here".
 
 # import chart data and merge to one big dataset
 file_names = dir(path = here("data", "1_charts_per_country"), pattern = "*.csv")
-my_data = sapply(here("data", "1_charts_per_country", file_names), read.csv, simplify = FALSE) # file name as row name
+my_data = sapply(here("data", "1_charts_per_country", file_names), fread, simplify = FALSE) # file name as row name
 
 combined_data = data.frame(do.call(rbind, my_data)) # create one data set
 combined_data = rownames_to_column(combined_data, "Country") # convert row names to column

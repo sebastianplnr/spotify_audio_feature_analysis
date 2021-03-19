@@ -1,4 +1,5 @@
 library("tidyverse")
+library("data.table")
 library("countrycode")
 library("lubridate")
 
@@ -8,7 +9,7 @@ setwd(file_path)
 
 library("here") # set working directory PRIOR to loading "here".
 
-data = read.csv(here("data", "5_clean_data.csv"), colClasses = c("week" = "character")) # week as character such that the leading zero is not lost as it is important for further analysis and visualisation in particular
+data = data.frame(fread(here("data", "5_clean_data.csv"), colClasses = c("week" = "character"))) # week as character such that the leading zero is not lost as it is important for further analysis and visualisation in particular
 
 # converting variables to the right type
 data$date = as.Date(data$date)
@@ -21,11 +22,11 @@ reduced_weighted_data = data %>%
   select(country, date, year, week, rank, valence) %>%
   mutate(reversed_rank = 201 - rank, weighted_valence = valence * reversed_rank) %>% 
   group_by(country, year, week) %>% 
-  summarise(avg_weighted_valence = mean(weighted_valence))
+  summarise(weighted_valence = mean(weighted_valence))
 
 
 # train model to predict 2020 valence scores which will serve as baseline to compare the actual 2020 data against
-lm1_formula = as.formula(avg_weighted_valence ~ year + week + country + year:country + week:country)
+lm1_formula = as.formula(weighted_valence ~ year + week + country + year:country + week:country)
 
 training_data = reduced_weighted_data %>% filter(year < 2020, week != 53)
 test_data = reduced_weighted_data %>% filter(year >= 2020, week != 53)
@@ -46,9 +47,9 @@ combined_data$date = make_date(year = combined_data$year) + weeks(combined_data$
 
 # calculate difference between baseline (i.e. predicted valence) and actual valence
 combined_data = combined_data %>%
-  mutate(difference = round((weighted_valence_pred - avg_weighted_valence), digits = 2),
-         proportion_of_deviation = round((difference/weighted_valence_pred), digits = 2)) %>%
-  select(country, date, avg_weighted_valence, weighted_valence_pred, difference, proportion_of_deviation)
+  mutate(difference = weighted_valence_pred - weighted_valence,
+         proportion_of_deviation = difference/weighted_valence_pred) %>%
+  select(country, date, weighted_valence_pred, weighted_valence, difference, proportion_of_deviation)
   
 
 combined_data = data.frame(combined_data)

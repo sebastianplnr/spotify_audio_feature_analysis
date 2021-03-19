@@ -1,4 +1,5 @@
 library("tidyverse")
+library("data.table")
 library("lubridate")
 library("aweek")
 library("countrycode")
@@ -14,7 +15,7 @@ library("here")
 
 
 # import data
-data = read.csv(here("data", "4_charts_audio_features.csv"))
+data = data.frame(fread(here("data", "4_charts_audio_features.csv")))
 
 
 # select relevant columns, change to all lower case names

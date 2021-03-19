@@ -1,4 +1,5 @@
 library("tidyverse")
+library("data.table")
 
 # set new working directory
 file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis"
@@ -7,11 +8,9 @@ setwd(file_path)
 library("here") # set working directory PRIOR to loading "here".
 
 # import charts and audio feature data
-charts_data = read_csv(here("data", "1_charts.csv"))
-charts_data = data.frame(charts_data)
+charts_data = data.frame(fread(here("data", "1_charts.csv")))
 
-audio_features = read_csv(here("data", "3_audio_features.csv"))
-audio_features = data.frame(audio_features)
+audio_features = data.frame(fread(here("data", "3_audio_features.csv")))
 
 
 # rename column such that data sets can be joined by an identifier variable
@@ -36,8 +35,7 @@ write.csv(na_songids, here("data", "4_na_songids"), row.names = FALSE)
 
 
 # after retrieving missing audio features import, clean, select and filter them
-additional_data = read_csv(here("data", "4_missing_audio_features.csv"))
-additional_data = data.frame(additional_data)
+additional_data = data.frame(fread(here("data", "4_missing_audio_features.csv")))
 
 additional_data = additional_data %>% 
   rename("Index" = "X1") %>%
