@@ -47,9 +47,9 @@ combined_data$date = make_date(year = combined_data$year) + weeks(combined_data$
 
 # calculate difference between baseline (i.e. predicted valence) and actual valence
 combined_data = combined_data %>%
-  mutate(difference = weighted_valence_pred - weighted_valence,
+  mutate(difference = weighted_valence - weighted_valence_pred,
          proportion_of_deviation = difference/weighted_valence_pred) %>%
-  select(country, date, weighted_valence_pred, weighted_valence, difference, proportion_of_deviation)
+  select(country, date, weighted_valence, weighted_valence_pred, difference, proportion_of_deviation)
   
 
 combined_data = data.frame(combined_data)

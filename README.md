@@ -31,3 +31,11 @@ Building a linear model based on the years 2017 to (including) 2019 to predict t
 
 ### Step 7 (in R)
 Visualising the difference between predicted and actual scores for each feature (valence, danceability, energy, tempo).
+
+
+% begin.rcode 
+
+a = c(1,2,3)
+sum(a)
+
+% end.rcode

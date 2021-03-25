@@ -43,7 +43,7 @@ valence_heat_map = results %>%
   geom_tile(color = "white") +
   
   scale_x_date(date_breaks = "1 month",
-               date_labels = "%b %Y",
+               date_labels = "%b %y",
                expand = c(0,0),
                sec.axis = dup_axis()) +
   
@@ -54,8 +54,7 @@ valence_heat_map = results %>%
                        limits = c(-0.27, 0.27),
                        labels = scales::percent_format(accuracy = 1L),
                        name = "Deviation from\nexpected valence",
-                       guide = guide_legend(direction = "horizontal",
-                                            title.position = "top",
+                       guide = guide_legend(title.position = "top",
                                             label.position = "bottom")) +
   
   labs(title = "Valence got low, low, low, low, low, low, low, low",
@@ -71,6 +70,7 @@ valence_heat_map = results %>%
         axis.ticks.y = element_blank(),
         legend.position = "top",
         legend.justification = "right",
+        legend.direction = "horizontal",
         legend.title.align = 1,
         legend.key.width = unit(1, unit = "cm"),
         legend.key.height = unit(0.2, unit = "cm"),
@@ -79,6 +79,7 @@ valence_heat_map = results %>%
         legend.box.margin = margin(b = -0.5, unit = "cm"))
 
 valence_heat_map
+
 ggsave(here("figures", "valence_heat_map.png"), valence_heat_map, width = 10, height = 11)
 
 # valence_heat_map_html = ggplotly(valence_heat_map)
@@ -93,14 +94,14 @@ valence_line_plot = data %>%
   geom_line() +
   
   scale_x_date(date_breaks = "2 month",
-               date_labels = "%b %Y") +
+               date_labels = "%b %y") +
   
   scale_y_continuous(labels = scales::percent_format(accuracy = 1L),
                      limits = c(-0.25, 0.25)) +
   
   scale_colour_discrete(name = "") +
   
-  labs(title = "Valence got low, low, low, low, low, low, low, low",
+  labs(title = "",
        subtitle = "Based on Spotify's weekly top 200 songs per country",
        caption = "Source: https://spotifycharts.com/regional, 12.02.2021",
        x = "", y = "Deviation from expected valence") +
@@ -110,9 +111,11 @@ valence_line_plot = data %>%
   theme(plot.title = element_text(size = 18, face = "bold"),
         plot.margin = margin(t = 1, r = 1, b = 1, l = 1, unit = "cm"),
         panel.grid.major = element_line(size = 0.1, colour = "gray"),
-        legend.position = "bottom",
-        legend.justification = "left",
-        legend.margin = margin(t = -0.5, b = -0.5, unit = "cm"),
+        legend.position = "top",
+        legend.justification = "right",
+        legend.text = element_text(size = 11),
+        legend.direction = "horizontal",
+        legend.margin = margin(t = -0.7, b = 0, unit = "cm"),
         legend.box.margin = margin(b = -0.1, unit = "cm"))
 
 valence_line_plot
