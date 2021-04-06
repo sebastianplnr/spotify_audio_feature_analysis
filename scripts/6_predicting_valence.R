@@ -26,15 +26,15 @@ reduced_weighted_data = data %>%
 
 
 # train model to predict 2020 valence scores which will serve as baseline to compare the actual 2020 data against
-lm1_formula = as.formula(weighted_valence ~ year + week + country + year:country + week:country)
+lm_valence_formula = as.formula(weighted_valence ~ year + week + country + year:country + week:country)
 
 training_data = reduced_weighted_data %>% filter(year < 2020, week != 53)
 test_data = reduced_weighted_data %>% filter(year >= 2020, week != 53)
 
 
-# basic linear modelling
-lm1 = lm(lm1_formula, data = training_data)
-weighted_valence_pred = predict(lm1, newdata = test_data)
+# basic linear modelling and predicting
+lm_valence = lm(lm_valence_formula, data = training_data)
+weighted_valence_pred = predict(lm_valence, newdata = test_data)
 
 
 # merged actual and predicted data sets 

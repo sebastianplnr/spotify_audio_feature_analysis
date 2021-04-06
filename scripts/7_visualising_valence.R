@@ -20,11 +20,11 @@ data$date = as.Date(data$date)
 # smoothing the proportion of deviation
 models = data %>%
   nest(-country) %>%
-  mutate(m = map(data, loess, formula = proportion_of_deviation ~ as.numeric(date), span = 0.2), # loess per country
+  mutate(m = map(data, loess, formula = proportion_of_deviation ~ as.numeric(date), span = 0.2),
          fitted = map(m, `[[`, "fitted")) # retrieve fitted values from each model
 
 
-# apply fitted y's as a new column
+# apply fitted Y's as a new column
 results = models %>%
   select(-m) %>%
   unnest()
@@ -87,10 +87,10 @@ ggsave(here("figures", "valence_heat_map.png"), valence_heat_map, width = 10, he
 
 
 # line plot
-valence_line_plot = data %>%
+valence_line_plot = results %>%
   filter(country == "United States" | country == "United Kingdom" | country == "Germany") %>% 
   
-  ggplot(aes(date, proportion_of_deviation, colour = country)) +
+  ggplot(aes(date, fitted, colour = country)) +
   geom_line() +
   
   scale_x_date(date_breaks = "2 month",

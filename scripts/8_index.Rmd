@@ -1,12 +1,13 @@
 ---
-title: "__Visualising Valence 2__"
+title: "__Visualising Valence__"
+subtitle: "Project report for PSY6422 data managment and visualisation"
 author: "Sebastian Ploner"
 output:
   html_document:
-    code_folding: hide
+    code_folding: show
     df_print option: paged
     highlight: pygments
-    toc: no
+    toc: yes
     toc_depth: 3
 editor_options:
   chunk_output_type: console
@@ -14,17 +15,149 @@ editor_options:
 
 ```{r setup, include = FALSE}
 
-knitr::opts_chunk$set(warning = FALSE, message = FALSE) # echo = FALSE for hiden code
+knitr::opts_chunk$set(warning = FALSE, message = FALSE) # echo = FALSE for hidden code
 
 ```
 
 
-```{r Load libraries, import data and adjust variable classes}
+## Background and research question
+In February 2020, *The Economist* published an [article](https://www.economist.com/graphic-detail/2020/02/08/data-from-spotify-suggest-that-listeners-are-gloomiest-in-february) which compared the mood of different populations by assessing the valence of the music they listened to, i.e. by analysing the top 200 Spotify songs people listened to. Since then, the Covid-19 pandemic has gridlocked the world. Physical illness and repeated lockdowns has likely caused depression, loneliness and anxiety. The question is how these potential effects on mental health can be assessed at scale. I therefore hypothesised that the valence of the music people listened to during the pandemic deviated from the valence expected from the years prior to the pandemic. To this end, I specifically compared the predicted valence scores for 2020 (based on the three preceding, non-Covid years) to the actual 2020 scores. The observed difference is visualised. 
 
-library("tidyverse")
+
+## Data origin
+####  __Scraping Spotify charts__
+I first scraped and queried the data. This was the most time consuming part of the project. The charts i.e., the top 200 songs for 70 countries, were scraped from [Spotify's website](https://spotifycharts.com/regional/global/weekly/latest) with a modified [script found on GitHub](https://gist.github.com/hktosun/d4f98488cb8f005214acd12296506f48). The modifications included (i) changing the time interval from daily to weekly charts which substantially reduced the dataset size; (ii) scraping the songs' URLs as they included the song IDs which were necessary to query the audio features; (iii) adding a "memory" feature such that the scraping didn't have to start from scratch whenever it was disrupted (e.g., due to connection issues). The scraping output included 70 CSV files which had to be merged and cleaned (for more details please check [script "2_import_merge_charts.R"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts)). This concluded the first part of the data gathering process.
+
+```{r charts, echo = FALSE}
+
 library("data.table")
 
-# set new working directory
+file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis/"
+setwd(file_path)
+
+library("here")
+
+charts = data.frame(fread(here("data", "1_charts.csv")))
+knitr::kable(head(charts), caption = "Head of the charts data frame")
+
+```
+
+
+#### __Querying audio features__
+I next queried the audio features for all songs. Spotify offers an [API](https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-several-audio-features) which is accessible to registered developers. Again, a developer offered a template to query the audio features. Spotify only allows a limited number of requests, so theoretically one request results in one set of audio features for a limited number of songs. There is a workaround however. By creating chunks (of 100 songs) and sending them as *one* request it is possible to get more audio features at once. The challenge is to untangle the double nested list which is returned [see script "3_audio_features_query.ipynb"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts). For a detailed description of the audio feature variables please check the [codebook](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/data). This concluded the second and final part of the data gathering process.
+
+```{r audio features, echo = FALSE}
+
+library("data.table")
+library("tidyverse")
+
+file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis/"
+setwd(file_path)
+
+library("here")
+
+audio_feaures = data.frame(fread(here("data", "3_audio_features.csv")))
+audio_feaures = audio_feaures[, c("danceability", "energy",	"key",	"loudness",	"speechiness",	"acousticness", "liveness",	"valence",	"tempo", "id")]
+
+audio_feaures = audio_feaures %>% rename("Song.ID" = "id")
+
+knitr::kable(head(audio_feaures), caption = "Sample of the audio feature variables", format.args = list(scientific = FALSE))
+
+```
+
+
+## Data preparation
+The data preparation was rather extensive. Its comprehensive and detailed description goes beyond the scope of this high-level report but can be found here (for more detail please check the [scripts](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts)). A general principle throughout the entire project was inspecting the data after each and every single command. This allowed for correcting mistakes and repeating erroneous queries.
+
+In addition to the careful data inspection after each command, a dedicated script handled major points of actions. Those included joining the two data sets, subsetting relevant variables, coherent variable naming, cleaning the country names, adding a week variable which was necessary for later visualisation, checking missing data and excluding countries for which Spotify only started publishing the charts recently. The following shows a *sample* of the 
+["4_joining_charts_audio_features.R" and "5_data_preparation.R" scripts](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts).
+
+```{r data preparation, eval = FALSE}
+
+# merging charts and audio features
+data = left_join(charts, audio_features, by = "Song.ID")
+
+
+# select relevant columns, change to all lower case names
+data = data %>%
+  select(-c("type":"time_signature")) %>% 
+  rename("country" = "Country", "song" = "Song", "artist" = "Artist", "date" = "Date", "song_id" = "Song.ID", "streams" = "Streams", "rank" = "Rank")
+
+
+# clean the country names 
+data$country = countrycode(data$country, "country.name", "country.name", warn = FALSE, nomatch = NULL)
+data$country = ifelse(data$country == "global", "Global", data$country)
+
+
+# create year and week variable (with leading zeros for the single digit weeks) those are need later for the visualisation
+data$year = isoyear(ymd(data$date))
+
+data$week = date2week(data$date)
+data$week = substr(data$week, 7, 8) # extract week number by index
+
+
+# excluding some country due to a lack of data (Spotify started collecting charts later some countries than others)
+data = data %>% filter(country != "Andorra", country != "Russia", country != "Ukraine", country != "India", country != "Egypt", country != "Morocco", country != "United Arab Emirates", country != "Saudi Arabia")
+
+
+# export cleaned data
+write.csv(data, here("data", "5_clean_data.csv"), row.names = FALSE)
+
+```
+
+
+## Predicting 2020 valence scores
+Next, I calculated a baseline to compare the observed 2020 valence scores against. To respect the order of the charts (naturally the top song should be more influential than the 200th song), the valence scores were weighted by their reversed rank. As compared to weighting by the number of streams, weighting by the reversed rank is not influenced by Spotify's popularity, i.e. larger countries like the USA can be directly compared with smaller countries like Estonia. It also has the advantage that the top songs were not too influential.
+
+Furthermore, I splitted the data in a training and test set. The training set included all data points of 2017, 2018 and 2019. The test set included the 2020 data. A linear model was trained and used to predict the 2020 valence scores. I calculated absolute and relative differences between the observed and predicted scores. Finally, I visualised the relative differences. Below is a *sample* of the ["6_predicting_valence.R" script](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts)
+
+```{r weighting and predicting valence, eval = FALSE}
+
+reduced_weighted_data = data %>%
+  select(country, date, year, week, rank, valence) %>%
+  mutate(reversed_rank = 201 - rank, weighted_valence = valence * reversed_rank) %>% 
+  group_by(country, year, week) %>% 
+  summarise(weighted_valence = mean(weighted_valence))
+
+
+# train model to predict 2020 valence scores which will serve as baseline to compare the actual 2020 data against
+lm_valence_formula = as.formula(weighted_valence ~ year + week + country + year:country + week:country)
+
+training_data = reduced_weighted_data %>% filter(year < 2020, week != 53)
+test_data = reduced_weighted_data %>% filter(year >= 2020, week != 53)
+
+
+# basic linear modelling and predicting
+lm_valence = lm(lm_valence_formula, data = training_data)
+weighted_valence_pred = predict(lm_valence, newdata = test_data)
+
+
+# merged actual and predicted data sets 
+combined_data = cbind(test_data, data.frame(weighted_valence_pred))
+
+
+# calculate difference between baseline (i.e. predicted valence) and actual valence
+combined_data = combined_data %>%
+  mutate(difference = weighted_valence - weighted_valence_pred,
+         proportion_of_deviation = difference/weighted_valence_pred) %>%
+  select(country, date, weighted_valence, weighted_valence_pred, difference, proportion_of_deviation)
+
+
+write.csv(combined_data, here("data", "6_predicted_valence.csv"), row.names = FALSE)
+
+```
+
+
+## Visualisation
+The previous sections summarised the most important parts of data gathering and modelling. The following section includes the full script of the visualisations. First, the working directory was set to the root of the project folder, from where one can access the appropiate subfolders. To import the data, the "data.table::fread" function was used as it's more efficient than R's base "read.csv" function.
+
+
+```{r Load libraries, import data and adjust variable classes}
+
+library("data.table")
+library("tidyverse")
+
+# set working directory to main root project folder
 file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis/"
 setwd(file_path)
 
@@ -42,34 +175,41 @@ knitr::kable(head(data))
 
 ```
 
+Second, all data includes some degree of noise which may distract from the actual trend. To this end, prior to visualising a smoothing technique (local weighted regression, loess) is applied. 
 
 ```{r Smoothing valence}
 
 # smoothing the proportion of deviation
 models = data %>%
   nest(-country) %>%
-  mutate(m = map(data, loess, formula = proportion_of_deviation ~ as.numeric(date), span = 0.2), # loess per country
+  mutate(m = map(data, loess, formula = proportion_of_deviation ~ as.numeric(date), span = 0.2),
          fitted = map(m, `[[`, "fitted")) # retrieve fitted values from each model
 
 
-# apply fitted y's as a new column
-results = models %>%
+# apply fitted Y's as a new column
+smoothed_data = models %>%
   select(-m) %>%
   unnest()
 
 ```
 
 
-```{r Valence heat map, fig.width = 10, fig.height = 11}
+#### Heat map
+
+Third, to discover a continent based pattern in the data the countries are loosely sorted according to their geographic location (from east to west). The a heat map is created.
+
+At first glance it's apparent that there's a 
+
+```{r fig.width = 10, fig.height = 11}
 
 # ordering countries loosely by proximity
 level_ordered = c("Global", "New Zealand", "Australia", "Philippines", "Hong Kong SAR China", "Japan", "Singapore", "Malaysia", "Vietnam", "Thailand", "Taiwan", "Indonesia", "Israel", "Turkey", "Greece", "Cyprus", "Bulgaria", "Hungary", "Czechia", "Romania", "Poland", "Slovakia", "Austria","Luxembourg", "Switzerland", "Italy", "Germany", "Netherlands", "Belgium", "France", "Spain", "Portugal", "United Kingdom", "Ireland", "Denmark", "Norway", "Sweden", "Finland", "Latvia", "Lithuania", "Estonia", "South Africa", "Iceland", "United States", "Canada", "Mexico", "Dominican Republic", "Guatemala", "El Salvador", "Honduras", "Nicaragua", "Costa Rica", "Panama", "Colombia", "Ecuador", "Peru", "Bolivia", "Chile", "Brazil", "Paraguay", "Argentina", "Uruguay")
-results$country = factor(results$country, levels = level_ordered)
+smoothed_data$country = factor(smoothed_data$country, levels = level_ordered)
 
 
 # heat map for smoothed data
-valence_heatmap = results %>%
-  filter(country != "Cyprus", date < "2021-02-05") %>% # exclude cyprus due to skewing the results
+valence_heatmap = smoothed_data %>%
+  filter(country != "Cyprus", date < "2021-02-05") %>% # exclude Cyprus due to skewing the results
   
   ggplot(aes(date, country, fill = fitted)) +
   geom_tile(color = "white") +
@@ -115,13 +255,16 @@ valence_heatmap
 ```
 
 
-```{r Valence line plot, fig.width = 10, fig.height = 6}
+#### Line plot
+The line plot shows the valence over time for the US, UK and Germany
+
+```{r, fig.width = 10, fig.height = 6}
 
 # line plot
-valence_line_plot = data %>%
+valence_line_plot = smoothed_data %>%
   filter(country == "United States" | country == "United Kingdom" | country == "Germany") %>% 
   
-  ggplot(aes(date, proportion_of_deviation, colour = country)) +
+  ggplot(aes(date, fitted, colour = country)) +
   geom_line() +
   
   scale_x_date(date_breaks = "2 month",
