@@ -231,7 +231,7 @@ valence_heatmap = smoothed_data %>%
                        guide = guide_legend(title.position = "top",
                                             label.position = "bottom")) +
   
-  labs(title = "Valence got low, low, low, low, low, low, low, low",
+  labs(title = "Valence Up and Down",
        subtitle = "Based on Spotify's weekly top 200 songs per country",
        caption = "Source: https://spotifycharts.com/regional, 12.02.2021",
        x = "", y = "") +
@@ -283,7 +283,7 @@ valence_line_plot = smoothed_data %>%
   
   scale_colour_discrete(name = "") +
   
-  labs(title = "Valence got low, low, low, low, low, low, low, low",
+  labs(title = "Valence Up and Down",
        subtitle = "Based on Spotify's weekly top 200 songs per country",
        caption = "Source: https://spotifycharts.com/regional, 12.02.2021",
        x = "", y = "Deviation from expected valence") +

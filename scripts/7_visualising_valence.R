@@ -1,6 +1,5 @@
 library("tidyverse")
 library("data.table")
-library("plotly")
 
 # set new working directory
 file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis/"
@@ -25,18 +24,18 @@ models = data %>%
 
 
 # apply fitted Y's as a new column
-results = models %>%
+smoothed_data = models %>%
   select(-m) %>%
   unnest()
 
 
 # ordering countries loosely by proximity
 level_ordered = c("Global", "New Zealand", "Australia", "Philippines", "Hong Kong SAR China", "Japan", "Singapore", "Malaysia", "Vietnam", "Thailand", "Taiwan", "Indonesia", "Israel", "Turkey", "Greece", "Cyprus", "Bulgaria", "Hungary", "Czechia", "Romania", "Poland", "Slovakia", "Austria","Luxembourg", "Switzerland", "Italy", "Germany", "Netherlands", "Belgium", "France", "Spain", "Portugal", "United Kingdom", "Ireland", "Denmark", "Norway", "Sweden", "Finland", "Latvia", "Lithuania", "Estonia", "South Africa", "Iceland", "United States", "Canada", "Mexico", "Dominican Republic", "Guatemala", "El Salvador", "Honduras", "Nicaragua", "Costa Rica", "Panama", "Colombia", "Ecuador", "Peru", "Bolivia", "Chile", "Brazil", "Paraguay", "Argentina", "Uruguay")
-results$country = factor(results$country, levels = level_ordered)
+smoothed_data$country = factor(smoothed_data$country, levels = level_ordered)
 
 
 # heat map for smoothed data
-valence_heat_map = results %>%
+valence_heat_map = smoothed_data %>%
   filter(country != "Cyprus", date < "2021-02-05") %>% # exclude cyprus due to skewing the results
   
   ggplot(aes(date, country, fill = fitted)) +
@@ -57,7 +56,7 @@ valence_heat_map = results %>%
                        guide = guide_legend(title.position = "top",
                                             label.position = "bottom")) +
   
-  labs(title = "Valence got low, low, low, low, low, low, low, low",
+  labs(title = "Valence Up and Down",
        subtitle = "Based on Spotify's weekly top 200 songs per country",
        caption = "Source: https://spotifycharts.com/regional, 12.02.2021",
        x = "", y = "") +
@@ -82,12 +81,9 @@ valence_heat_map
 
 ggsave(here("figures", "valence_heat_map.png"), valence_heat_map, width = 10, height = 11)
 
-# valence_heat_map_html = ggplotly(valence_heat_map)
-# valence_heat_map_html
-
 
 # line plot
-valence_line_plot = results %>%
+valence_line_plot = smoothed_data %>%
   filter(country == "United States" | country == "United Kingdom" | country == "Germany") %>% # pick your country
   
   ggplot(aes(date, fitted, colour = country)) +
@@ -101,7 +97,7 @@ valence_line_plot = results %>%
   
   scale_colour_discrete(name = "") +
   
-  labs(title = "",
+  labs(title = "Valence Up and Down",
        subtitle = "Based on Spotify's weekly top 200 songs per country",
        caption = "Source: https://spotifycharts.com/regional, 12.02.2021",
        x = "", y = "Deviation from expected valence") +
@@ -121,6 +117,4 @@ valence_line_plot = results %>%
 valence_line_plot
 
 ggsave(here("figures", "valence_line_plot.png"), valence_line_plot, width = 10, height = 6)
-
-
 
