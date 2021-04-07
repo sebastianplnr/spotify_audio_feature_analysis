@@ -20,7 +20,7 @@ Join the charts with the audio features.
 ### Step 5 (in R)
 Preparing the data. That is excluding the NAs (only few), selecting the relevant columns and weighting the audio features accordingly to their charts rank (or rather their reserve rank such that song higher up in the charts are more influential).
 
-### Step 6 (in Python)
+### Step 6 (in R)
 Building a linear model based on the years 2017 to (including) 2019 to predict the 2020 audio features scores (valence, danceability, energy, tempo). These predictions serve as a baseline to compare the actual 2020 scores. 
 
 ### Step 7 (in R)
