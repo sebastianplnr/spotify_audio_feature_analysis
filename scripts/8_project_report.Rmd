@@ -26,7 +26,7 @@ In February 2020, *The Economist* published an [article](https://www.economist.c
 
 ## Data origin
 ####  __Scraping Spotify charts__
-I first scraped and queried the data. This was the most time consuming part of the project. The charts i.e., the top 200 songs for 70 countries, were scraped from [Spotify's website](https://spotifycharts.com/regional/global/weekly/latest) with a modified [script found on GitHub](https://gist.github.com/hktosun/d4f98488cb8f005214acd12296506f48). The modifications included (i) changing the time interval from daily to weekly charts which substantially reduced the dataset size; (ii) scraping the songs' URLs as they included the song IDs which were necessary to query the audio features; (iii) adding a "memory" feature such that the scraping didn't have to start from scratch whenever it was disrupted (e.g., due to connection issues). The scraping output included 70 CSV files which had to be merged and cleaned (for more details please check [script "2_import_merge_charts.R"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts)). This concluded the first part of the data gathering process.
+I first scraped and queried the data. This was the most time consuming part of the project. The charts i.e., the top 200 songs for 70 countries, were scraped from [Spotify's website](https://spotifycharts.com/regional/global/weekly/latest) with a modified [script found on GitHub](https://gist.github.com/hktosun/d4f98488cb8f005214acd12296506f48). The [modifications](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/1_spotify_charts_web_scraper.ipynb) included (i) changing the time interval from daily to weekly charts which substantially reduced the dataset size; (ii) scraping the songs' URLs as they included the song IDs which were necessary to query the audio features; (iii) adding a "memory" feature such that the scraping didn't have to start from scratch whenever it was disrupted (e.g., due to connection issues). The scraping output included 70 CSV files which had to be merged and cleaned (for more details please check [script "2_import_merge_charts.R"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/2_import_merge_charts.R)). This concluded the first part of the data gathering process.
 
 ```{r charts, echo = FALSE}
 
@@ -44,7 +44,7 @@ knitr::kable(head(charts), caption = "Head of the charts data frame")
 
 
 #### __Querying audio features__
-I next queried the audio features for all songs. Spotify offers an [API](https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-several-audio-features) which is accessible to registered developers. Again, a developer offered a template to query the audio features. Spotify only allows a limited number of requests, so theoretically one request results in one set of audio features for a limited number of songs. There is a workaround however. By creating chunks (of 100 songs) and sending them as *one* request it is possible to get more audio features at once. The challenge is to untangle the double nested list which is returned [see script "3_audio_features_query.ipynb"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts). For a detailed description of the audio feature variables please check the [codebook](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/data). This concluded the second and final part of the data gathering process.
+I next queried the audio features for all songs. Spotify offers an [API](https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-several-audio-features) which is accessible to registered developers. Again, a developer offered a template to query the audio features. Spotify only allows a limited number of requests, so theoretically one request results in one set of audio features for a limited number of songs. There is a workaround however. By creating chunks (of 100 songs) and sending them as *one* request it is possible to get more audio features at once. The challenge is to untangle the double nested list which is returned [see script "3_audio_features_query.ipynb"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/3_audio_features_query.ipynb). For a detailed description of the audio feature variables please check the [codebook](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/data/codebook.txt). This concluded the second and final part of the data gathering process.
 
 ```{r audio features, echo = FALSE}
 
@@ -70,7 +70,7 @@ knitr::kable(head(audio_feaures), caption = "Sample of the audio feature variabl
 The data preparation was rather extensive. Its comprehensive and detailed description goes beyond the scope of this high-level report but can be found here (for more detail please check the [scripts](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts)). A general principle throughout the entire project was inspecting the data after each and every single command. This allowed for correcting mistakes and repeating erroneous queries.
 
 In addition to the careful data inspection after each command, a dedicated script handled major points of actions. Those included joining the two data sets, subsetting relevant variables, coherent variable naming, cleaning the country names, adding a week variable which was necessary for later visualisation, checking missing data and excluding countries for which Spotify only started publishing the charts recently. The following shows a *sample* of the 
-["4_joining_charts_audio_features.R" and "5_data_preparation.R" scripts](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts).
+["4_joining_charts_audio_features.R"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/4_joining_charts_audio_features.R) and ["5_data_preparation.R" scripts](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/5_data_preparation.R).
 
 ```{r data preparation, eval = FALSE}
 
@@ -109,7 +109,7 @@ write.csv(data, here("data", "5_clean_data.csv"), row.names = FALSE)
 ## Predicting 2020 valence scores
 Next, I calculated a baseline to compare the observed 2020 valence scores against. To respect the order of the charts (naturally the top song should be more influential than the 200th song), the valence scores were weighted by their reversed rank. As compared to weighting by the number of streams, weighting by the reversed rank is not influenced by Spotify's popularity, i.e. larger countries like the USA can be directly compared with smaller countries like Estonia. It also has the advantage that the top songs were not too influential.
 
-Furthermore, I splitted the data in a training and test set. The training set included all data points of 2017, 2018 and 2019. The test set included the 2020 data. A linear model was trained and used to predict the 2020 valence scores. I calculated absolute and relative differences between the observed and predicted scores. Finally, I visualised the relative differences. Below is a *sample* of the ["6_predicting_valence.R" script](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts)
+Furthermore, I splitted the data in a training and test set. The training set included all data points of 2017, 2018 and 2019. The test set included the 2020 data. A linear model was trained and used to predict the 2020 valence scores. I calculated absolute and relative differences between the observed and predicted scores. Finally, I visualised the relative differences. Below is a *sample* of the ["6_predicting_valence.R" script](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/6_predicting_valence.R)
 
 ```{r weighting and predicting valence, eval = FALSE}
 
@@ -149,7 +149,7 @@ write.csv(combined_data, here("data", "6_predicted_valence.csv"), row.names = FA
 
 
 ## Visualisation
-The previous sections summarised the most important parts of data gathering and modelling. The following section includes the full script of the visualisations. First, the working directory was set to the root of the project folder, from where one can access the appropiate subfolders. To import the data, the "data.table::fread" function was used as it's more efficient than R's base "read.csv" function.
+The previous sections summarised the most important parts of data gathering and modelling. The following section includes the full script of the visualisations. First, the working directory was set to the root of the project folder, from where one can access the appropriate subfolders. The  To import the data, the "data.table::fread" function was used as it's more efficient than R's base "read.csv" function.
 
 
 ```{r Load libraries, import data and adjust variable classes}
@@ -157,11 +157,11 @@ The previous sections summarised the most important parts of data gathering and 
 library("data.table")
 library("tidyverse")
 
-# set working directory to main root project folder
+# set working directory to main root project folder PRIOR to load "here"
 file_path = "/Users/sebastian/Documents/Uni/Sheffield (MSc)/2. Semester/Data Analysis and Viz/spotify_audio_feature_analysis/"
 setwd(file_path)
 
-# set working directory PRIOR to loading "here"
+# Load "here" to make command OS independent
 library("here")
 
 # import data
@@ -194,11 +194,13 @@ smoothed_data = models %>%
 ```
 
 
-#### Heat map
+#### __Heat map__
 
-Third, to discover a continent based pattern in the data the countries are loosely sorted according to their geographic location (from east to west). The a heat map is created.
+Third, to discover a location based pattern in the data the countries are loosely sorted according to their geographic location (from east to west). Cyprus is excluded due its extreme values which would skew the rest of the heat map. Moreover, not all country have values for the last week so the it's removed.
 
-At first glance it's apparent that there's a 
+At first glance there's  a noticeable difference between Central/South America and the rest of the world which has somewhat higher valence scores than predicted. It's encouraging to see that countries close to each other have similar patters as it suggests that those scores capture a real construct.
+
+In Europe, on average, there is higher valence than predicted. A hypothesis could be that people listen to more positive music to uplift their mood. However, concrete interpretation is up for debate. An interesting extension of this project would be relate lockdown measures, Covid cases or fatalities to valence and check if there is a relationship.
 
 ```{r fig.width = 10, fig.height = 11}
 
@@ -216,7 +218,7 @@ valence_heatmap = smoothed_data %>%
   
   scale_x_date(date_breaks = "1 month",
                date_labels = "%b %y",
-               expand = c(0,0), # removing padding around the data 
+               expand = c(0, 0), # removing padding around the data 
                sec.axis = dup_axis()) + # duplicate x-axis to the top
   
   scale_y_discrete(limits = rev) + # removing padding around the data
@@ -255,14 +257,20 @@ valence_heatmap
 ```
 
 
-#### Line plot
-The line plot shows the valence over time for the US, UK and Germany
+#### __Line plot__
+The line plot shows the valence over time for the US, UK and Germany. It allows for a more detailed evaluation of the curve than the heat map. Interestingly, the UK and the US have fairly similar patters and are on average more positive than predicted. Germany, however, is doing slightly worse than predicted.
+
+What I find particularly interesting are the points in time where the trend seems to climax and then change. In April, especially the UK and US reach their maximum roughly around the time when the first Covid wave was at its pinnacle. Then in August, for the US, and, in October, for Germany, valence starts to increase again antithetical to the Covid situation in the respective countries.
+
+Finally, Germany was doing relatively well compared to the UK and US during the first wave, however, the second wave in October struck Germany much harder and interestingly at that time its valence score converges to the other two countries.
+
+The choice of countries displayed here is arbitrary, I invite you to download the data (["6_predicted_valence.csv"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/data/link_to_data.txt)) and the script (["7_visualising_valence.R"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/7_visualising_valence.R)) to play around with the countries.
 
 ```{r, fig.width = 10, fig.height = 6}
 
 # line plot
 valence_line_plot = smoothed_data %>%
-  filter(country == "United States" | country == "United Kingdom" | country == "Germany") %>% 
+  filter(country == "United States" | country == "United Kingdom" | country == "Germany") %>% # pick your country
   
   ggplot(aes(date, fitted, colour = country)) +
   geom_line() +
@@ -296,3 +304,7 @@ valence_line_plot
 
 ```
 
+## Conclusion
+There are some interesting patters in the data. The fact that countries in close proximity have similar patters is encouraging as it suggests a real underlying construct. Naturally all conclusions are solely correctional. An interesting extension of the project would be adding data on the Covid cases/fatalities, lockdown measures, etc.
+
+I'm glad to have done this project and learned a lot especially regarding data wrangling skills. Also using Python and an API was rather insightful. Overall, I find it tough to point to specific things I learned. I believe to true output of this project is a certain confidence in being able to do something like it and solve problems along the way independently.

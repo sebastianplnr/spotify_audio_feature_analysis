@@ -88,7 +88,7 @@ ggsave(here("figures", "valence_heat_map.png"), valence_heat_map, width = 10, he
 
 # line plot
 valence_line_plot = results %>%
-  filter(country == "United States" | country == "United Kingdom" | country == "Germany") %>% 
+  filter(country == "United States" | country == "United Kingdom" | country == "Germany") %>% # pick your country
   
   ggplot(aes(date, fitted, colour = country)) +
   geom_line() +
