@@ -70,7 +70,7 @@ knitr::kable(head(audio_feaures), caption = "Sample of the audio feature variabl
 The data preparation was rather extensive. Its comprehensive and detailed description goes beyond the scope of this high-level report but can be found here (for more detail please check the [scripts](https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts)). A general principle throughout the entire project was inspecting the data after each and every single command. This allowed for correcting mistakes and repeating erroneous queries.
 
 In addition to the careful data inspection after each command, a dedicated script handled major points of actions. Those included joining the two data sets, subsetting relevant variables, coherent variable naming, cleaning the country names, adding a week variable which was necessary for later visualisation, checking missing data and excluding countries for which Spotify only started publishing the charts recently. The following shows a *sample* of the 
-["4_joining_charts_audio_features.R"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/4_joining_charts_audio_features.R) and ["5_data_preparation.R" scripts](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/5_data_preparation.R).
+["4_joining_charts_audio_features.R"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/4_joining_charts_audio_features.R) and ["5_data_preparation.R"](https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/5_data_preparation.R) scripts.
 
 ```{r data preparation, eval = FALSE}
 
@@ -308,3 +308,18 @@ valence_line_plot
 There are some interesting patters in the data. The fact that countries in close proximity have similar patters is encouraging as it suggests a real underlying construct. Naturally all conclusions are solely correctional. An interesting extension of the project would be adding data on the Covid cases/fatalities, lockdown measures, etc.
 
 I'm glad to have done this project and learned a lot especially regarding data wrangling skills. Also using Python and an API was rather insightful. Overall, I find it tough to point to specific things I learned. I believe to true output of this project is a certain confidence in being able to do something like it and solve problems along the way independently.
+
+## References
+
+* *The Economist* - Data from Spotify suggest that listeners are gloomiest in February. https://www.economist.com/graphic-detail/2020/02/08/data-from-spotify-suggest-that-listeners-are-gloomiest-in-february
+
+* Spotify web scraper basis. https://gist.github.com/hktosun/d4f98488cb8f005214acd12296506f48
+
+* Spotify web scraping song IDs. https://medium.com/the-innovation/how-to-scrape-the-most-popular-songs-on-spotify-using-python-8a8979fa6b06
+
+* Spotify audio feature query basis. https://stmorse.github.io/journal/spotify-api.html
+
+* Spotify API documentation. https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-several-audio-features
+
+* My GitHub repository. https://github.com/sebastianplnr/spotify_audio_feature_analysis
+

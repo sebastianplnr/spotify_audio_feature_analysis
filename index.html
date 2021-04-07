@@ -281,6 +281,7 @@ pre code {
 <li><a href="#predicting-2020-valence-scores">Predicting 2020 valence scores</a></li>
 <li><a href="#visualisation">Visualisation</a></li>
 <li><a href="#conclusion">Conclusion</a></li>
+<li><a href="#references">References</a></li>
 </ul>
 </div>
 
@@ -484,7 +485,7 @@ pre code {
 <div id="data-preparation" class="section level2">
 <h2>Data preparation</h2>
 <p>The data preparation was rather extensive. Its comprehensive and detailed description goes beyond the scope of this high-level report but can be found here (for more detail please check the <a href="https://github.com/sebastianplnr/spotify_audio_feature_analysis/tree/main/scripts">scripts</a>). A general principle throughout the entire project was inspecting the data after each and every single command. This allowed for correcting mistakes and repeating erroneous queries.</p>
-<p>In addition to the careful data inspection after each command, a dedicated script handled major points of actions. Those included joining the two data sets, subsetting relevant variables, coherent variable naming, cleaning the country names, adding a week variable which was necessary for later visualisation, checking missing data and excluding countries for which Spotify only started publishing the charts recently. The following shows a <em>sample</em> of the <a href="https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/4_joining_charts_audio_features.R">“4_joining_charts_audio_features.R”</a> and <a href="https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/5_data_preparation.R">“5_data_preparation.R” scripts</a>.</p>
+<p>In addition to the careful data inspection after each command, a dedicated script handled major points of actions. Those included joining the two data sets, subsetting relevant variables, coherent variable naming, cleaning the country names, adding a week variable which was necessary for later visualisation, checking missing data and excluding countries for which Spotify only started publishing the charts recently. The following shows a <em>sample</em> of the <a href="https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/4_joining_charts_audio_features.R">“4_joining_charts_audio_features.R”</a> and <a href="https://github.com/sebastianplnr/spotify_audio_feature_analysis/blob/main/scripts/5_data_preparation.R">“5_data_preparation.R”</a> scripts.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># merging charts and audio features</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>data <span class="ot">=</span> <span class="fu">left_join</span>(charts, audio_features, <span class="at">by =</span> <span class="st">&quot;Song.ID&quot;</span>)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -755,6 +756,17 @@ pre code {
 <h2>Conclusion</h2>
 <p>There are some interesting patters in the data. The fact that countries in close proximity have similar patters is encouraging as it suggests a real underlying construct. Naturally all conclusions are solely correctional. An interesting extension of the project would be adding data on the Covid cases/fatalities, lockdown measures, etc.</p>
 <p>I’m glad to have done this project and learned a lot especially regarding data wrangling skills. Also using Python and an API was rather insightful. Overall, I find it tough to point to specific things I learned. I believe to true output of this project is a certain confidence in being able to do something like it and solve problems along the way independently.</p>
+</div>
+<div id="references" class="section level2">
+<h2>References</h2>
+<ul>
+<li><p><em>The Economist</em> - Data from Spotify suggest that listeners are gloomiest in February. <a href="https://www.economist.com/graphic-detail/2020/02/08/data-from-spotify-suggest-that-listeners-are-gloomiest-in-february" class="uri">https://www.economist.com/graphic-detail/2020/02/08/data-from-spotify-suggest-that-listeners-are-gloomiest-in-february</a></p></li>
+<li><p>Spotify web scraper basis. <a href="https://gist.github.com/hktosun/d4f98488cb8f005214acd12296506f48" class="uri">https://gist.github.com/hktosun/d4f98488cb8f005214acd12296506f48</a></p></li>
+<li><p>Spotify web scraping song IDs. <a href="https://medium.com/the-innovation/how-to-scrape-the-most-popular-songs-on-spotify-using-python-8a8979fa6b06" class="uri">https://medium.com/the-innovation/how-to-scrape-the-most-popular-songs-on-spotify-using-python-8a8979fa6b06</a></p></li>
+<li><p>Spotify audio feature query basis. <a href="https://stmorse.github.io/journal/spotify-api.html" class="uri">https://stmorse.github.io/journal/spotify-api.html</a></p></li>
+<li><p>Spotify API documentation. <a href="https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-several-audio-features" class="uri">https://developer.spotify.com/documentation/web-api/reference/#endpoint-get-several-audio-features</a></p></li>
+<li><p>My GitHub repository. <a href="https://github.com/sebastianplnr/spotify_audio_feature_analysis" class="uri">https://github.com/sebastianplnr/spotify_audio_feature_analysis</a></p></li>
+</ul>
 </div>
 
 
