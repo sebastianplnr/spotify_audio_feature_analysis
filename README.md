@@ -27,4 +27,4 @@ Building a linear model based on the years 2017, 2018 and 2019 to predict the 20
 Visualising the relative difference between predicted and actual scores for valence.
 
 ### Step 8 (in R)
-Write project report.
+Writing the project report which is identical to the index page for the *GitHub Page*.
