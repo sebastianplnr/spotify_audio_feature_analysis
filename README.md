@@ -1,14 +1,8 @@
 # Spotify Audio Feature Analysis
 
-In December, during a virtual discussion, Spotify and its potential of assessing mood through the music briefly came up. Following the meeting, I started reading up on the topic and came across an interesting article by The Economist and a Twitter thread of its author. He had analysed the charts of the last three years and calculated the average happiness (or "valence" in Spotify's terms) per month and country. It turns out that while there is considerable variation between the countries, on average February is the "gloomiest' month of the year and July the happiest. The article had been published in February of 2020 though, and a lot has happened since then.
+The repository contains all necessary tools to understand and replicate the project. The scripts and data sets are numbered corresponding to the following steps and their outputs. Both R and Python were used as each of them possesses unique strengths and limitations. 
 
-In Covid times, case numbers dominate our everyday lives as they inform the lastest points of action of the government. It is often criticised that governments are relying too much on these numbers and seldom consider the people's psychological states. Part of this problem is that the case numbers are much more tangible than emotion or mood, particularly at scale. So what if there was a way to evaluate mood at scale without the cost and time-consuming surveying and interviewing? This is where music is entering the stage. Assuming the type of music is indeed partly determined by our state of mind, would it not be worthwhile trying to analyse the songs we listen to?
-
-This project seeks to visualise the difference between the predicted 2020 mood (based on the past three non-Covid years) and the actual 2020 mood. Spotify, being one of the biggest players in music streaming, publishes since January 2017 the top 200 songs per week for 70 countries. They have also developed an algorithm that assigns each song a "valence", "danceability", "energy", and "tempo" score based on the song's characteristics. These scores can be queried by registered Spotify developers.
-
-The following will describe each step of the project such that interested parties can fully understand and replicate the project. The repository contains all the necessary tools for this. The scripts and data sets are numbered corresponding to the following steps and their outputs. Both R and Python were used as each of them possesses unique strengths and limitations. 
-
-A final thought, extending the project by correlating the observed differences with e.g., number of Covid cases or (excess) deaths, or degree of restrictions or movement activity would be very interesting.
+Extending the project by correlating the observed differences with e.g., number of Covid cases or (excess) deaths, or degree of restrictions or movement activity would be very interesting.
 
 
 ### Step 1 (in Python)
@@ -31,11 +25,3 @@ Building a linear model based on the years 2017 to (including) 2019 to predict t
 
 ### Step 7 (in R)
 Visualising the difference between predicted and actual scores for each feature (valence, danceability, energy, tempo).
-
-
-% begin.rcode 
-
-a = c(1,2,3)
-sum(a)
-
-% end.rcode
