@@ -6,6 +6,10 @@
 
 "date" - Date on which the charts were published (usually on Thursdays)
 
+"year" - year (2017, 2018, 2019, 2020, 2021)
+
+"week" - week number (1 to 52)
+
 "song_id" - Unique track identifier
 
 "streams" - Number of times the track was streamed
@@ -47,3 +51,13 @@
 "duration_ms" - The duration of the track in milliseconds.
 
 "time_signature" - An estimated overall time signature of a track. The time signature (meter) is a notational convention to specify how many beats are in each bar (or measure).
+
+"reversed_rank" - reversed chart rank (201 - x)
+
+"weighted_valence" - valence weighted with reversed rank (valence * reversed_rank)
+
+"weighted_valence_pred" - predicted valence scores serving as baseline for 2020
+
+"difference" = difference score; weighted_valence - weighted_valence_pred
+
+"proportion_of_deviation" = relative difference; difference/weighted_valence_pred
