@@ -6,7 +6,8 @@ Extending the project by correlating the observed differences with e.g., number 
 
 
 ### Step 1 (in Python)
-Scrape Spotify charts (here: all possible countries, top 200, weekly) and save data per country as csv.
+Scrape Spotify charts (here: all possible countries, top 200, weekly) and save data per country as csv. (Update 2021-05-23: unfortunately, Spotify seem to have revoked permission for querying the source code of their webpage or at least through the "requests" library)
+
 
 ### Step 2 (in R)
 Import all countries data sets, merge them, identify unique song IDs, create chunks of 100 song IDs (to use server requests as efficiently as poosible) and save them as a csv.
