@@ -1,6 +1,6 @@
 # Spotify Audio Feature Analysis
 
-The repository contains all necessary tools to understand and replicate the project. The scripts and data sets are numbered corresponding to the following steps and their outputs. Both R and Python were used as each of them possesses unique strengths and limitations. Each script and dataset has a number corresponding to the steps discribed below e.g. Step 1, scraping the charts, has a scripted and output dataset labled with a "1" followed by a descriptive name.
+The repository contains all necessary tools to understand and replicate the project. The scripts and data sets are numbered corresponding to the following steps and their outputs. Both R and Python were used as each of them possesses unique strengths and limitations. Each script and dataset has a number corresponding to the steps discribed below e.g. Step 1, scraping the charts, has a script and output dataset labled with a "1" followed by a descriptive name.
 
 ### Step 1 (in Python)
 Scrape Spotify charts (here: all possible countries, top 200, weekly) and save data per country as csv. (Update 2021-05-23: unfortunately, Spotify seem to have revoked permission for querying the source code of their webpage or at least through the "requests" library)
