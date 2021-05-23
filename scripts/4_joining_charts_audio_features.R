@@ -32,7 +32,7 @@ summary(selected_data)
 na_data = selected_data %>% filter(is.na(valence))
 na_songids = na_data %>% select(Song.ID)
 
-write.csv(na_songids, here("data", "4_na_songids"), row.names = FALSE)
+write.csv(na_songids, here("data", "4_na_songids.csv"), row.names = FALSE)
 
 
 # after retrieving missing audio features import, clean, select and filter them
