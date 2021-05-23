@@ -5,8 +5,6 @@
 
 /data/*.csv
 
-/data/1_charts_per_country
-
 /data/1_charts_per_country/*.csv
 
 /attic
